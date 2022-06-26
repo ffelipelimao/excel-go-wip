@@ -6,7 +6,7 @@ import (
 	"github.com/ffelipelimao/excel-go/internal/domain"
 )
 
-//TODO: Add mockgen to generate mockups
+//go:generate mockgen -source=./business.go -destination=../../mocks/business.go -package=mocks
 type GameService interface {
 	List() ([]domain.Game, error)
 	ListExcel() (*bytes.Buffer, error)
