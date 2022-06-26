@@ -2,7 +2,9 @@ package business
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"mime/multipart"
 	"strconv"
 
 	"github.com/ffelipelimao/excel-go/internal/domain"
@@ -65,4 +67,48 @@ func makeHeaderFile(file *excelize.File) {
 	file.SetCellValue(GameSheetName, "B1", "Name")
 	file.SetCellValue(GameSheetName, "C1", "Price")
 	file.SetCellValue(GameSheetName, "D1", "Thumb")
+}
+
+func (s GameServiceImpl) ReadExcel(file multipart.File) ([]domain.Game, error) {
+	reader, err := excelize.OpenReader(file)
+	if err != nil {
+		return []domain.Game{}, err
+	}
+
+	rows, err := reader.GetRows(GameSheetName)
+	if err != nil {
+		return []domain.Game{}, err
+	}
+
+	games := []domain.Game{}
+	for i, row := range rows {
+		// skip header
+		if i == 0 {
+			continue
+		}
+
+		game, err := makeGameByLine(row)
+		if err != nil {
+			return []domain.Game{}, err
+		}
+
+		games = append(games, game)
+	}
+
+	return games, nil
+}
+
+func makeGameByLine(line []string) (domain.Game, error) {
+	if len(line) < 4 {
+		return domain.Game{}, errors.New("invalid columns")
+	}
+
+	game := domain.Game{
+		ID:    line[0],
+		Name:  line[1],
+		Price: line[2],
+		Thumb: line[3],
+	}
+
+	return game, nil
 }

@@ -6,6 +6,7 @@ package mocks
 
 import (
 	bytes "bytes"
+	multipart "mime/multipart"
 	reflect "reflect"
 
 	domain "github.com/ffelipelimao/excel-go/internal/domain"
@@ -63,4 +64,19 @@ func (m *MockGameService) ListExcel() (*bytes.Buffer, error) {
 func (mr *MockGameServiceMockRecorder) ListExcel() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListExcel", reflect.TypeOf((*MockGameService)(nil).ListExcel))
+}
+
+// ReadExcel mocks base method.
+func (m *MockGameService) ReadExcel(file multipart.File) ([]domain.Game, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadExcel", file)
+	ret0, _ := ret[0].([]domain.Game)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReadExcel indicates an expected call of ReadExcel.
+func (mr *MockGameServiceMockRecorder) ReadExcel(file interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadExcel", reflect.TypeOf((*MockGameService)(nil).ReadExcel), file)
 }
